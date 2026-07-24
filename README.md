@@ -106,6 +106,74 @@ Tu peux facilement transformer ça en petite page HTML admin plus tard si tu veu
 
 `champs_requis` = les infos à demander au client (ID joueur, email, etc.).
 
+## Pòtfèy (Wallet) — peman san verifikasyon chak fwa
+
+Kliyan ka kreye yon pòtfèy sou `/wallet.html` ak yon nimewo telefòn + kòd PIN.
+Yo rechaje l ak NatCash (sa mande yon verifikasyon **yon sèl fwa**, tankou yon
+kòmand nòmal). Apre sa, tout kòmand yo fè "ak pòtfèy" **pran lajan nan balans
+lan otomatikman, e livrezon kòd la fèt lamenm** — pa gen okenn etap
+verifikasyon chak fwa yo achte.
+
+**Konfime yon rechajman pòtfèy (kredite balans lan):**
+```bash
+curl -X POST -H "x-admin-token: TON_TOKEN" \
+  http://localhost:3000/api/admin/depots/ID_DEPO/confirmer
+```
+
+**Wè tout demand rechajman:**
+```bash
+curl -H "x-admin-token: TON_TOKEN" http://localhost:3000/api/admin/depots
+```
+
+⚠️ Sistèm PIN sa a senp (pa gen "modpase bliye" pou kounye a) — bon pou
+kòmanse, men pa yon sistèm sekirite bancaire konplè.
+
+## Livrezon otomatik ak kòd rechaj
+
+Kounye a, lè yon kòmand konfime **paye**, sistèm lan bay kliyan an yon kòd
+otomatikman — ou pa oblije voye l manyèlman sou WhatsApp.
+
+Men jan l mache:
+1. Ou dwe **plede kòd yo davans** nan stock pou chak pwodwi.
+2. Lè yon kòmand NatCash konfime "paye" (oswa yon kòmand MonCash peye
+   otomatikman), sèvè a pran yon kòd nan stock la, kole l sou kòmand lan,
+   e chanje estati a pou "livre".
+3. Si pa gen kòd ki disponib, kòmand lan rete "paye" ak yon `en_attente_stock`
+   — ou dwe ajoute plis kòd, epi remake statut la "paye" ankò pou l eseye
+   livre otomatikman.
+4. Kliyan an ka wè kòd li a sou paj `/suivi.html` ak nimewo kòmand li.
+
+**Ajoute kòd nan stock:**
+```bash
+curl -X POST -H "x-admin-token: TON_TOKEN" -H "Content-Type: application/json" \
+  -d '{"productId":"ff-100","codes":["CODE-ABC123","CODE-XYZ456"]}' \
+  http://localhost:3000/api/admin/codes
+```
+
+**Wè konbyen kòd ki rete pou chak pwodwi:**
+```bash
+curl -H "x-admin-token: TON_TOKEN" http://localhost:3000/api/admin/codes
+```
+
+**Konfime yon kòmand NatCash peye (deklanche livrezon otomatik):**
+```bash
+curl -X POST -H "x-admin-token: TON_TOKEN" -H "Content-Type: application/json" \
+  -d '{"statut":"paye"}' \
+  http://localhost:3000/api/admin/orders/ID_KOMAND/statut
+```
+
+## MonCash dezaktive pou kounye a
+
+Paske ou pa gen kont business MonCash, `ENABLE_MONCASH=false` nan `.env`.
+Sit la montre sèlman NatCash kòm opsyon peman. Lè ou gen enfòmasyon MonCash
+yo, mete `ENABLE_MONCASH=true` epi ranpli `MONCASH_CLIENT_ID` /
+`MONCASH_CLIENT_SECRET` — bouton MonCash a ap parèt otomatikman ankò.
+
+## Bouton WhatsApp ak paj suivi
+
+- Bouton WhatsApp flotan an itilize `WHATSAPP_NUMBER` nan `.env`.
+- Kliyan yo ka swiv kòmand yo sou `/suivi.html` ak ID kòmand yo resevwa a.
+
 ## Programme d'affiliation
 
 N'importe qui peut s'inscrire sur `/afilye.html` pour devenir affilié : il

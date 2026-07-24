@@ -36,12 +36,92 @@
     "champs_requis": ["id_joueur"]
   },
   {
+    "id": "efootball",
+    "categorie": "jeux",
+    "jeu": "eFootball",
+    "nom": "Pyès (Coins)",
+    "prix_htg": 220,
+    "badge": "eF",
+    "couleur": "#1560bd",
+    "champs_requis": ["id_joueur"]
+  },
+  {
+    "id": "dream-league-soccer",
+    "categorie": "jeux",
+    "jeu": "Dream League Soccer",
+    "nom": "Rechaj kredi",
+    "prix_htg": 400,
+    "badge": "DLS",
+    "couleur": "#c81d25",
+    "champs_requis": ["id_joueur"]
+  },
+  {
+    "id": "roblox",
+    "categorie": "jeux",
+    "jeu": "Roblox",
+    "nom": "Robux",
+    "prix_htg": 750,
+    "badge": "RBX",
+    "couleur": "#111111",
+    "champs_requis": ["id_joueur"]
+  },
+  {
+    "id": "minecraft",
+    "categorie": "jeux",
+    "jeu": "Minecraft",
+    "nom": "Kredi / Kont",
+    "prix_htg": 900,
+    "badge": "MC",
+    "couleur": "#3b8526",
+    "champs_requis": ["id_joueur"]
+  },
+  {
+    "id": "blood-strike",
+    "categorie": "jeux",
+    "jeu": "Blood Strike",
+    "nom": "Rechaj kredi",
+    "prix_htg": 157,
+    "badge": "BS",
+    "couleur": "#c1272d",
+    "champs_requis": ["id_joueur"]
+  },
+  {
     "id": "netflix-1mois",
     "categorie": "streaming",
     "jeu": "Netflix",
     "nom": "Abònman 1 mwa",
     "prix_htg": 500,
     "icone": "play",
+    "champs_requis": ["email_compte"]
+  },
+  {
+    "id": "disney-plus",
+    "categorie": "streaming",
+    "jeu": "Disney+",
+    "nom": "Abònman 1 mwa",
+    "prix_htg": 600,
+    "badge": "D+",
+    "couleur": "#113ccf",
+    "champs_requis": ["email_compte"]
+  },
+  {
+    "id": "prime-video",
+    "categorie": "streaming",
+    "jeu": "Prime Video",
+    "nom": "Abònman 1 mwa",
+    "prix_htg": 550,
+    "badge": "PV",
+    "couleur": "#00a8e1",
+    "champs_requis": ["email_compte"]
+  },
+  {
+    "id": "crunchyroll",
+    "categorie": "streaming",
+    "jeu": "Crunchyroll",
+    "nom": "Abònman 1 mwa",
+    "prix_htg": 500,
+    "badge": "CR",
+    "couleur": "#f47521",
     "champs_requis": ["email_compte"]
   },
   {
@@ -52,5 +132,57 @@
     "prix_htg": 2500,
     "icone": "carte",
     "champs_requis": ["nom_complet", "telephone"]
+  },
+  {
+    "id": "apple-giftcard",
+    "categorie": "kado",
+    "jeu": "Apple",
+    "nom": "Gift Card",
+    "prix_htg": 1500,
+    "badge": "AP",
+    "couleur": "#555555",
+    "champs_requis": ["telephone"]
+  },
+  {
+    "id": "google-play",
+    "categorie": "kado",
+    "jeu": "Google Play",
+    "nom": "Gift Card",
+    "prix_htg": 1200,
+    "badge": "GP",
+    "couleur": "#34a853",
+    "champs_requis": ["telephone"]
+  },
+  {
+    "id": "steam",
+    "categorie": "kado",
+    "jeu": "Steam",
+    "nom": "Wallet Code",
+    "prix_htg": 1500,
+    "badge": "ST",
+    "couleur": "#1b2838",
+    "champs_requis": ["telephone"]
+  },
+  {
+    "id": "wise",
+    "categorie": "finans",
+    "jeu": "Wise",
+    "nom": "Transfè lajan",
+    "prix_htg": 0,
+    "badge": "W",
+    "couleur": "#9fe870",
+    "sou_demand": true,
+    "champs_requis": ["telephone"]
+  },
+  {
+    "id": "paypal",
+    "categorie": "finans",
+    "jeu": "PayPal",
+    "nom": "Rechaj / Retrè",
+    "prix_htg": 0,
+    "badge": "PP",
+    "couleur": "#003087",
+    "sou_demand": true,
+    "champs_requis": ["telephone"]
   }
 ]

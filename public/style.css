@@ -1,16 +1,16 @@
 :root {
-  --bg: #0e0c18;
-  --bg-soft: #15111f;
-  --surface: #1e1a2e;
-  --surface-2: #262138;
-  --line: #34304a;
-  --line-soft: #2a273b;
-  --text: #f6f4fb;
-  --text-dim: #ada7c2;
-  --lime: #c6ff3d;
-  --lime-soft: rgba(198, 255, 61, 0.12);
+  --bg: #f7f7fb;
+  --bg-soft: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #f0f0f6;
+  --line: #e1e1eb;
+  --line-soft: #ebebf2;
+  --text: #16141f;
+  --text-dim: #6b6878;
+  --lime: #7ac70c;
+  --lime-soft: rgba(122, 199, 12, 0.12);
   --coral: #ff6b4a;
-  --violet: #8b6cff;
+  --violet: #7c5cff;
   --font-display: "Space Grotesk", sans-serif;
   --font-body: "Inter", sans-serif;
   --font-mono: "IBM Plex Mono", monospace;
@@ -46,7 +46,7 @@ body {
   border-bottom: 1px solid var(--line-soft);
   position: sticky;
   top: 0;
-  background: rgba(14, 12, 24, 0.82);
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   z-index: 20;
@@ -608,4 +608,192 @@ main.wrap { padding: 28px 20px 90px; }
 @media (prefers-reduced-motion: reduce) {
   .ticket { animation: none; }
   .product-card { animation: none; }
+}
+
+/* ---------- Menu button + sidebar ---------- */
+
+.menu-btn {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--text);
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-right: 6px;
+}
+.menu-btn svg { width: 18px; height: 18px; }
+.menu-btn:hover { border-color: var(--lime); color: var(--lime); }
+
+.side-menu {
+  position: fixed;
+  top: 0;
+  left: -300px;
+  width: 100%;
+  max-width: 300px;
+  height: 100%;
+  background: var(--surface);
+  border-right: 1px solid var(--line);
+  z-index: 45;
+  transition: left 0.28s cubic-bezier(.2,.7,.3,1);
+  box-shadow: 20px 0 60px -20px rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
+}
+
+.side-menu.open { left: 0; }
+
+.side-menu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.side-menu-links {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  gap: 4px;
+}
+
+.side-menu-links a {
+  color: var(--text);
+  text-decoration: none;
+  padding: 14px 12px;
+  border-radius: 12px;
+  font-size: 15px;
+  transition: 0.15s;
+}
+
+.side-menu-links a:hover {
+  background: var(--surface-2);
+  color: var(--lime);
+}
+
+/* ---------- Category icon grid ---------- */
+
+.cat-grid {
+  display: flex;
+  gap: 14px;
+  padding: 26px 0 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.cat-grid::-webkit-scrollbar { display: none; }
+
+.cat-icon-btn {
+  background: none;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  color: var(--text-dim);
+  font-size: 12.5px;
+  font-family: var(--font-mono);
+  flex-shrink: 0;
+  transition: 0.15s;
+}
+
+.cat-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  transition: 0.18s;
+}
+
+.cat-icon-jeux { background: linear-gradient(135deg, #4f6bff, #3a4fd1); border-color: transparent; }
+.cat-icon-streaming { background: linear-gradient(135deg, #ff5f5f, #d13a3a); border-color: transparent; }
+.cat-icon-carte { background: linear-gradient(135deg, #2fd88a, #1eae6c); border-color: transparent; }
+
+.cat-icon-btn.active { color: var(--text); }
+.cat-icon-btn.active .cat-icon { transform: scale(1.08); box-shadow: 0 10px 24px -10px rgba(0,0,0,0.5); }
+.cat-icon-btn:hover .cat-icon { transform: translateY(-2px); }
+
+/* ---------- Section titles ---------- */
+
+.section-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 18px;
+  margin: 10px 0 14px;
+}
+
+.popular-section { padding-top: 8px; }
+
+/* ---------- Popular badge ---------- */
+
+.popular-card { position: relative; }
+
+.badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: linear-gradient(135deg, var(--coral), #ff8f6e);
+  color: #12101c;
+  font-size: 10.5px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  padding: 4px 9px;
+  border-radius: 999px;
+  z-index: 2;
+}
+
+/* ---------- WhatsApp floating button ---------- */
+
+.whatsapp-float {
+  position: fixed;
+  bottom: 22px;
+  right: 20px;
+  width: 56px;
+  height: 56px;
+  background: #25d366;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 12px 28px -8px rgba(37, 211, 102, 0.6);
+  z-index: 25;
+  transition: 0.18s;
+  text-decoration: none;
+}
+
+.whatsapp-float svg { width: 28px; height: 28px; }
+.whatsapp-float:hover { transform: scale(1.08); }
+
+/* ---------- Nouvo kategori icòn ---------- */
+
+.cat-icon-kado { background: linear-gradient(135deg, #ff6fa8, #ff3d7a); border-color: transparent; }
+.cat-icon-finans { background: linear-gradient(135deg, #2fb8d8, #1f8fb0); border-color: transparent; }
+
+/* ---------- Badj lèt koloré (olye logo ofisyèl) ---------- */
+
+.product-icon.badge-icon {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: -0.02em;
+}
+
+.product-price-demand {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--text-dim);
+  border: 1px dashed var(--line);
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
 }

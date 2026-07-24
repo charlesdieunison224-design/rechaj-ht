@@ -7,6 +7,8 @@ const { v4: uuidv4 } = require("uuid");
 const db = require("./src/db");
 const moncash = require("./src/moncash");
 const affiliates = require("./src/affiliates");
+const codes = require("./src/codes");
+const wallets = require("./src/wallets");
 
 const app = express();
 app.use(cors());
@@ -15,6 +17,30 @@ app.use(express.static(path.join(__dirname, "public")));
 
 const PORT = process.env.PORT || 3000;
 const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
+const ENABLE_MONCASH = process.env.ENABLE_MONCASH === "true";
+
+// Essaie de livrer automatiquement un code de rechaj pour une commande payée.
+// Retourne true si un code a été assigné (commande passe à "livre").
+function essayerLivraisonAuto(commande) {
+  const code = codes.prendreCode(commande.productId);
+  if (code) {
+    commande.code_redeem = code;
+    commande.statut = "livre";
+    commande.livre_le = new Date().toISOString();
+    return true;
+  }
+  // Pas de stock disponible : la commande reste "paye", en attente que
+  // l'admin ajoute des codes ou livre manuellement.
+  commande.en_attente_stock = true;
+  return false;
+}
+
+app.get("/api/config", (req, res) => {
+  res.json({
+    enableMoncash: ENABLE_MONCASH,
+    whatsapp: process.env.WHATSAPP_NUMBER || null,
+  });
+});
 
 // ---------- Produits ----------
 
@@ -27,10 +53,23 @@ app.get("/api/products", (req, res) => {
 // Crée une commande. body: { productId, quantite, champs, methode_paiement: "moncash" | "natcash" }
 app.post("/api/orders", async (req, res) => {
   try {
-    const { productId, quantite = 1, champs = {}, methode_paiement, code_parrain } = req.body;
+    const { productId, quantite = 1, champs = {}, methode_paiement, code_parrain, telephone_wallet, pin_wallet } = req.body;
 
-    if (!["moncash", "natcash"].includes(methode_paiement)) {
+    if (!["moncash", "natcash", "wallet"].includes(methode_paiement)) {
       return res.status(400).json({ erreur: "methode_paiement invalide" });
+    }
+
+    if (methode_paiement === "moncash" && !ENABLE_MONCASH) {
+      return res.status(400).json({ erreur: "MonCash pa disponib kounye a. Sèvi ak NatCash." });
+    }
+
+    if (methode_paiement === "wallet") {
+      if (!telephone_wallet || !pin_wallet) {
+        return res.status(400).json({ erreur: "Antre nimewo ak kòd PIN pòtfèy ou" });
+      }
+      if (!wallets.verifierPin(telephone_wallet, pin_wallet)) {
+        return res.status(401).json({ erreur: "Nimewo oswa kòd PIN pa kòrèk" });
+      }
     }
 
     const produit = db.getProducts().find((p) => p.id === productId);
@@ -66,6 +105,22 @@ app.post("/api/orders", async (req, res) => {
     };
 
     orders.push(nouvelleCommande);
+
+    if (methode_paiement === "wallet") {
+      const succes = wallets.debiter(telephone_wallet, montant);
+      if (!succes) {
+        orders.pop(); // annile kreyasyon an, pa gen ase lajan
+        return res.status(400).json({
+          erreur: "Balans pòtfèy ou pa sifi. Rechaje pòtfèy ou dabò.",
+        });
+      }
+      nouvelleCommande.statut = "paye";
+      affiliates.crediterCommission(nouvelleCommande);
+      essayerLivraisonAuto(nouvelleCommande);
+      db.saveOrders(orders);
+      return res.json({ commande: nouvelleCommande });
+    }
+
     db.saveOrders(orders);
 
     if (methode_paiement === "moncash") {
@@ -120,6 +175,7 @@ app.get("/api/moncash/callback", async (req, res) => {
       commande.statut = "paye";
       commande.reference_paiement = details.transaction_id;
       affiliates.crediterCommission(commande);
+      essayerLivraisonAuto(commande);
       db.saveOrders(orders);
     }
 
@@ -160,8 +216,89 @@ app.post("/api/admin/orders/:id/statut", verifierAdmin, (req, res) => {
   if (statut === "paye" || statut === "livre") {
     affiliates.crediterCommission(commande);
   }
+  if (statut === "paye") {
+    essayerLivraisonAuto(commande);
+  }
   db.saveOrders(orders);
   res.json(commande);
+});
+
+// ---------- Stock de codes de rechaj ----------
+
+// Ajoute des codes au stock d'un produit. body: { productId, codes: ["CODE1","CODE2",...] }
+app.post("/api/admin/codes", verifierAdmin, (req, res) => {
+  const { productId, codes: nouveauxCodes } = req.body;
+  if (!productId || !Array.isArray(nouveauxCodes) || nouveauxCodes.length === 0) {
+    return res.status(400).json({ erreur: "productId ak yon lis codes obligatwa" });
+  }
+  const total = codes.ajouterCodes(productId, nouveauxCodes);
+  res.json({ productId, total_en_stock: total });
+});
+
+app.get("/api/admin/codes", verifierAdmin, (req, res) => {
+  res.json(codes.compterStock());
+});
+
+// ---------- Pòtfèy (Wallet) ----------
+
+app.post("/api/wallet/inscription", (req, res) => {
+  const { telephone, pin } = req.body;
+  if (!telephone || !pin || String(pin).length < 4) {
+    return res.status(400).json({ erreur: "Telefòn ak yon kòd PIN (4 chif minimòm) obligatwa" });
+  }
+  try {
+    const wallet = wallets.creerWallet(telephone, pin);
+    res.json({ telephone: wallet.telephone, balans_htg: wallet.balans_htg });
+  } catch (err) {
+    res.status(400).json({ erreur: err.message });
+  }
+});
+
+app.post("/api/wallet/solde", (req, res) => {
+  const { telephone, pin } = req.body;
+  if (!wallets.verifierPin(telephone, pin)) {
+    return res.status(401).json({ erreur: "Nimewo oswa kòd PIN pa kòrèk" });
+  }
+  const wallet = wallets.trouverWallet(telephone);
+  res.json({ telephone: wallet.telephone, balans_htg: wallet.balans_htg });
+});
+
+// Kreye yon demand rechajman pòtfèy (peye via NatCash, tankou yon kòmand)
+app.post("/api/wallet/depo", (req, res) => {
+  const { telephone, pin, montant } = req.body;
+  if (!wallets.verifierPin(telephone, pin)) {
+    return res.status(401).json({ erreur: "Nimewo oswa kòd PIN pa kòrèk" });
+  }
+  if (!montant || montant < 50) {
+    return res.status(400).json({ erreur: "Montan minimòm se 50 HTG" });
+  }
+  const depot = wallets.creerDepot(telephone, montant);
+  res.json({
+    depot,
+    instructions_natcash: {
+      numero: process.env.NATCASH_MERCHANT_NUMBER || "À CONFIGURER",
+      nom: process.env.NATCASH_MERCHANT_NAME || "À CONFIGURER",
+      montant_htg: montant,
+    },
+  });
+});
+
+app.post("/api/wallet/depo/:id/confirmer-natcash", (req, res) => {
+  const { reference } = req.body;
+  if (!reference) return res.status(400).json({ erreur: "reference manquante" });
+  const depot = wallets.soumetReferansDepot(req.params.id, reference);
+  if (!depot) return res.status(404).json({ erreur: "Depo pa jwenn" });
+  res.json({ message: "Referans resevwa, n ap verifye l", depot });
+});
+
+app.get("/api/admin/depots", verifierAdmin, (req, res) => {
+  res.json(db.getDepots());
+});
+
+app.post("/api/admin/depots/:id/confirmer", verifierAdmin, (req, res) => {
+  const depot = wallets.confirmerDepot(req.params.id);
+  if (!depot) return res.status(404).json({ erreur: "Depo pa jwenn oswa deja konfime" });
+  res.json(depot);
 });
 
 // ---------- Affiliation ----------

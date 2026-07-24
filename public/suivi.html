@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Suivi kòmand — Rechaj</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a href="/" class="brand" style="text-decoration:none; color:inherit;">
+      <span class="brand-mark">⚡</span>
+      <span class="brand-name">Rechaj</span>
+    </a>
+  </div>
+</header>
+
+<section class="affil-hero wrap">
+  <h1>Suiv kòmand ou</h1>
+  <p>Antre nimewo kòmand ou resevwa a pou wè estati l ak kòd ou si l pare.</p>
+</section>
+
+<main class="wrap">
+  <form class="affil-form" id="suivi-form">
+    <div class="field-group">
+      <label>Nimewo kòmand (ID)</label>
+      <input type="text" name="orderId" placeholder="ex: 3f2a9c1b..." required />
+    </div>
+    <button type="submit" class="btn btn-primary">Verifye</button>
+    <p class="error-msg" id="suivi-error"></p>
+  </form>
+
+  <div class="affil-result" id="suivi-result" style="display:none;"></div>
+</main>
+
+<footer class="footer">
+  <div class="wrap"><p>Si w pèdi nimewo kòmand ou, kontakte nou sou WhatsApp.</p></div>
+</footer>
+
+<script>
+const STATUTS = {
+  en_attente: { label: "An atant peman", couleur: "var(--text-dim)" },
+  en_verification: { label: "N ap verifye peman ou", couleur: "var(--coral)" },
+  paye: { label: "Peye — n ap prepare kòd ou", couleur: "var(--violet)" },
+  livre: { label: "Livre ✅", couleur: "var(--lime)" },
+  annule: { label: "Anile", couleur: "var(--coral)" },
+};
+
+const params = new URLSearchParams(window.location.search);
+const idPrerempli = params.get("id");
+if (idPrerempli) {
+  document.querySelector('input[name="orderId"]').value = idPrerempli;
+}
+
+document.getElementById("suivi-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const errorEl = document.getElementById("suivi-error");
+  errorEl.textContent = "";
+  const orderId = new FormData(e.target).get("orderId").trim();
+
+  try {
+    const res = await fetch(`/api/orders/${orderId}`);
+    const data = await res.json();
+    if (!res.ok) {
+      errorEl.textContent = data.erreur || "Kòmand pa jwenn.";
+      return;
+    }
+
+    const s = STATUTS[data.statut] || { label: data.statut, couleur: "var(--text-dim)" };
+    const result = document.getElementById("suivi-result");
+    result.style.display = "block";
+    result.innerHTML = `
+      <h2 style="font-family:var(--font-display); margin-top:0;">${data.produit_nom}</h2>
+      <p style="color:${s.couleur}; font-family:var(--font-mono);">${s.label}</p>
+      <p class="mono">${data.montant_htg} HTG</p>
+      ${data.code_redeem ? `<div class="affil-link-box">${data.code_redeem}</div>` : ""}
+      ${data.en_attente_stock ? `<p style="color:var(--text-dim); font-size:13px;">Kòd ou ap parèt isit la kou li disponib.</p>` : ""}
+    `;
+  } catch (err) {
+    errorEl.textContent = "Pa t rive kontakte sèvè a.";
+  }
+});
+</script>
+
+</body>
+</html>

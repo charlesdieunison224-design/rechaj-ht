@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Pòtfèy mwen — Rechaj</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a href="/" class="brand" style="text-decoration:none; color:inherit;">
+      <span class="brand-mark">⚡</span>
+      <span class="brand-name">Rechaj</span>
+    </a>
+  </div>
+</header>
+
+<section class="affil-hero wrap">
+  <h1>👛 Pòtfèy mwen</h1>
+  <p>Rechaje yon sèl fwa, achte san w pa bezwen tann apre sa.</p>
+</section>
+
+<main class="wrap">
+  <!-- Konekte / Kreye -->
+  <div id="login-zone">
+    <form class="affil-form" id="login-form">
+      <div class="field-group">
+        <label>Nimewo telefòn</label>
+        <input type="text" name="telephone" required />
+      </div>
+      <div class="field-group">
+        <label>Kòd PIN (4 chif +)</label>
+        <input type="password" name="pin" required minlength="4" />
+      </div>
+      <button type="submit" class="btn btn-primary">Konekte</button>
+      <button type="button" id="btn-inscription" class="btn btn-secondary" style="margin-top:10px;">Kreye yon pòtfèy</button>
+      <p class="error-msg" id="login-error"></p>
+    </form>
+  </div>
+
+  <!-- Balans + rechajman (parèt apre konekte) -->
+  <div id="wallet-zone" style="display:none;">
+    <div class="affil-result">
+      <p style="color:var(--text-dim); font-size:13px;">Balans ou</p>
+      <div class="ticket-amount" id="balans-affichage" style="font-family:var(--font-display); font-size:38px;">0<span class="ticket-unit">HTG</span></div>
+    </div>
+
+    <form class="affil-form" id="depo-form" style="margin-top:24px;">
+      <div class="field-group">
+        <label>Montan pou rechaje (HTG)</label>
+        <input type="number" name="montant" min="50" required />
+      </div>
+      <button type="submit" class="btn btn-primary">Rechaje ak NatCash</button>
+      <p class="error-msg" id="depo-error"></p>
+    </form>
+
+    <div id="depo-result" style="display:none;" class="affil-result"></div>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="wrap"><p>Kòd PIN ou pwoteje pòtfèy ou — pa pataje l ak pèsonn.</p></div>
+</footer>
+
+<script>
+let session = null; // { telephone, pin }
+
+const loginZone = document.getElementById("login-zone");
+const walletZone = document.getElementById("wallet-zone");
+
+function afficherBalans(montant) {
+  document.getElementById("balans-affichage").innerHTML = `${montant}<span class="ticket-unit">HTG</span>`;
+  loginZone.style.display = "none";
+  walletZone.style.display = "block";
+}
+
+document.getElementById("login-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const errorEl = document.getElementById("login-error");
+  errorEl.textContent = "";
+  const fd = new FormData(e.target);
+  const telephone = fd.get("telephone");
+  const pin = fd.get("pin");
+
+  try {
+    const res = await fetch("/api/wallet/solde", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ telephone, pin }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      errorEl.textContent = data.erreur || "Erè koneksyon.";
+      return;
+    }
+    session = { telephone, pin };
+    afficherBalans(data.balans_htg);
+  } catch (err) {
+    errorEl.textContent = "Pa t rive kontakte sèvè a.";
+  }
+});
+
+document.getElementById("btn-inscription").addEventListener("click", async () => {
+  const errorEl = document.getElementById("login-error");
+  errorEl.textContent = "";
+  const telephone = document.querySelector('input[name="telephone"]').value;
+  const pin = document.querySelector('input[name="pin"]').value;
+
+  if (!telephone || !pin) {
+    errorEl.textContent = "Ranpli nimewo ak kòd PIN dabò.";
+    return;
+  }
+
+  try {
+    const res = await fetch("/api/wallet/inscription", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ telephone, pin }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      errorEl.textContent = data.erreur || "Erè kreyasyon.";
+      return;
+    }
+    session = { telephone, pin };
+    afficherBalans(data.balans_htg);
+  } catch (err) {
+    errorEl.textContent = "Pa t rive kontakte sèvè a.";
+  }
+});
+
+document.getElementById("depo-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const errorEl = document.getElementById("depo-error");
+  errorEl.textContent = "";
+  const montant = Number(new FormData(e.target).get("montant"));
+
+  try {
+    const res = await fetch("/api/wallet/depo", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...session, montant }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      errorEl.textContent = data.erreur || "Erè rechajman.";
+      return;
+    }
+
+    const info = data.instructions_natcash;
+    const depotId = data.depot.id;
+    const resultZone = document.getElementById("depo-result");
+    resultZone.style.display = "block";
+    resultZone.innerHTML = `
+      <div class="natcash-box">
+        Voye <span class="mono">${info.montant_htg} HTG</span> nan nimewo
+        <span class="mono">${info.numero}</span> (${info.nom}) via *202# oswa app Natcash.
+      </div>
+      <form id="ref-depo-form">
+        <div class="field-group">
+          <label>Referans tranzaksyon NatCash lan</label>
+          <input type="text" name="reference" required />
+        </div>
+        <button type="submit" class="btn btn-primary">Soumèt referans lan</button>
+      </form>
+      <p id="ref-depo-msg" style="margin-top:12px; color:var(--text-dim); font-size:13px;"></p>
+    `;
+
+    document.getElementById("ref-depo-form").addEventListener("submit", async (ev) => {
+      ev.preventDefault();
+      const reference = ev.target.reference.value;
+      const r = await fetch(`/api/wallet/depo/${depotId}/confirmer-natcash`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reference }),
+      });
+      const rd = await r.json();
+      document.getElementById("ref-depo-msg").textContent = r.ok
+        ? "Mèsi ! N ap verifye epi kredite pòtfèy ou byento."
+        : rd.erreur || "Erè pandan soumisyon an.";
+    });
+  } catch (err) {
+    errorEl.textContent = "Pa t rive kontakte sèvè a.";
+  }
+});
+</script>
+
+</body>
+</html>

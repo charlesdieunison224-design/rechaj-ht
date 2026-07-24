@@ -12,6 +12,9 @@
 
 <header class="topbar">
   <div class="wrap topbar-inner">
+    <button class="menu-btn" id="menu-btn" aria-label="Meni">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
     <div class="brand">
       <span class="brand-mark">⚡</span>
       <span class="brand-name">Rechaj</span>
@@ -19,6 +22,25 @@
     <div class="topbar-tagline">Kredi rapid, san tèt chaje</div>
   </div>
 </header>
+
+<!-- Meni sou kote -->
+<div class="overlay" id="menu-overlay"></div>
+<aside class="side-menu" id="side-menu">
+  <div class="side-menu-header">
+    <div class="brand">
+      <span class="brand-mark">⚡</span>
+      <span class="brand-name">Rechaj</span>
+    </div>
+    <button class="close-btn" id="close-menu">✕</button>
+  </div>
+  <nav class="side-menu-links">
+    <a href="/">🏠 Akèy</a>
+    <a href="/wallet.html">👛 Pòtfèy mwen</a>
+    <a href="/suivi.html">🧾 Kòmand mwen</a>
+    <a href="/afilye.html">💸 Fè kòb (Afiliyasyon)</a>
+    <a href="#" id="side-whatsapp">💬 Èd &amp; Sipò</a>
+  </nav>
+</aside>
 
 <section class="hero">
   <div class="wrap hero-inner">
@@ -29,26 +51,55 @@
         <span class="ticket-label">RECHARGE</span>
         <span class="ticket-status">● pare</span>
       </div>
-      <div class="ticket-amount">500<span class="ticket-unit">HTG</span></div>
+      <div class="ticket-amount">160<span class="ticket-unit">HTG</span></div>
       <div class="ticket-row ticket-row-sub">
         <span>Free Fire · Netflix · Carte prépayée</span>
       </div>
-      <div class="ticket-code">MC-9F21-NC</div>
+      <div class="ticket-code">NC-9F21-HT</div>
     </div>
     <div class="hero-text">
       <h1>Rechaje jwèt ou, abònman Netflix ou, oswa kreye kat prepeye ou — dirèkteman sou telefòn ou.</h1>
-      <p>Peye ak <strong>MonCash</strong> oswa <strong>NatCash</strong>. Livrezon rapid, san bank.</p>
+      <p>Peye ak <strong>NatCash</strong>. Resevwa kòd ou otomatikman.</p>
     </div>
   </div>
 </section>
 
-<nav class="cat-tabs wrap" id="cat-tabs">
-  <button class="cat-tab active" data-cat="jeux">Jwèt</button>
-  <button class="cat-tab" data-cat="streaming">Streaming</button>
-  <button class="cat-tab" data-cat="carte">Kat prepeye</button>
+<!-- Grille kategori style app -->
+<nav class="cat-grid wrap" id="cat-grid">
+  <button class="cat-icon-btn active" data-cat="jeux">
+    <span class="cat-icon cat-icon-jeux">🎮</span>
+    <span>Jwèt</span>
+  </button>
+  <button class="cat-icon-btn" data-cat="kado">
+    <span class="cat-icon cat-icon-kado">🎁</span>
+    <span>Kat Kado</span>
+  </button>
+  <button class="cat-icon-btn" data-cat="streaming">
+    <span class="cat-icon cat-icon-streaming">📺</span>
+    <span>Streaming</span>
+  </button>
+  <button class="cat-icon-btn" data-cat="finans">
+    <span class="cat-icon cat-icon-finans">💱</span>
+    <span>Finans</span>
+  </button>
+  <button class="cat-icon-btn" data-cat="carte">
+    <span class="cat-icon cat-icon-carte">💳</span>
+    <span>Kat prepeye</span>
+  </button>
 </nav>
 
+<!-- Pi Popilè -->
+<section class="wrap popular-section">
+  <div class="section-title">
+    <span>🔥 Pi Popilè</span>
+  </div>
+  <div class="grid" id="popular-grid"></div>
+</section>
+
 <main class="wrap">
+  <div class="section-title" id="cat-section-title">
+    <span>Jwèt</span>
+  </div>
   <div class="grid" id="product-grid">
     <!-- rempli par app.js -->
   </div>
@@ -61,9 +112,14 @@
   <div id="order-panel-content"></div>
 </aside>
 
+<!-- Bouton WhatsApp flotan -->
+<a href="#" id="whatsapp-float" class="whatsapp-float" target="_blank" rel="noopener" aria-label="WhatsApp">
+  <svg viewBox="0 0 32 32" fill="currentColor"><path d="M16.001 3C9.373 3 4 8.373 4 15c0 2.362.68 4.564 1.85 6.42L4 29l7.77-1.815A11.94 11.94 0 0 0 16.001 27C22.63 27 28 21.627 28 15S22.63 3 16.001 3zm0 21.818a9.78 9.78 0 0 1-4.99-1.366l-.358-.213-4.61 1.077 1.096-4.49-.234-.368A9.79 9.79 0 0 1 5.182 15c0-5.964 4.855-10.818 10.819-10.818S26.818 9.036 26.818 15 21.965 24.818 16.001 24.818zm5.55-7.85c-.304-.152-1.797-.887-2.076-.988-.279-.101-.482-.152-.685.152-.203.304-.786.987-.964 1.19-.177.203-.355.228-.659.076-.304-.152-1.283-.473-2.444-1.51-.904-.806-1.514-1.802-1.692-2.106-.177-.304-.019-.469.133-.62.137-.136.305-.355.457-.532.152-.178.203-.304.304-.507.101-.203.05-.38-.025-.532-.076-.152-.685-1.653-.94-2.264-.247-.594-.499-.514-.685-.523l-.583-.01a1.12 1.12 0 0 0-.812.38c-.279.304-1.064 1.04-1.064 2.537s1.09 2.943 1.242 3.146c.152.203 2.147 3.278 5.202 4.597.727.314 1.294.501 1.736.641.729.232 1.393.199 1.918.121.585-.087 1.797-.735 2.05-1.445.253-.71.253-1.318.177-1.445-.076-.127-.279-.203-.583-.355z"/></svg>
+</a>
+
 <footer class="footer">
   <div class="wrap footer-inner">
-    <p>Rechaj — sit demo. Konfigire MonCash / NatCash nan .env anvan w mete l an pwodiksyon.</p>
+    <p>Rechaj — peye ak NatCash, resevwa kòd ou otomatikman.</p>
     <a href="/afilye.html" class="footer-link">💸 Vin Afilye — fè kòb</a>
   </div>
 </footer>
