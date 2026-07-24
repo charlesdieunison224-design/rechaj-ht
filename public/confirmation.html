@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Konfimasyon — Rechaj</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <div class="brand"><span class="brand-mark">⚡</span><span class="brand-name">Rechaj</span></div>
+  </div>
+</header>
+
+<main class="wrap confirmation-wrap">
+  <div class="confirmation-card" id="confirmation-card">
+    <p>Verifikasyon peman an ap fèt...</p>
+  </div>
+  <a href="/" class="btn btn-secondary" style="margin-top:24px; display:inline-block;">← Retounen nan katalòg la</a>
+</main>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const orderId = params.get("orderId");
+  const statut = params.get("statut");
+  const card = document.getElementById("confirmation-card");
+
+  if (statut === "paye") {
+    card.innerHTML = `
+      <div class="confirm-icon confirm-ok">✓</div>
+      <h1>Peman konfime</h1>
+      <p>Kòmand ou <span class="mono">#${orderId?.slice(0,8)}</span> peye. Nou ap trete l talè.</p>
+    `;
+  } else {
+    card.innerHTML = `
+      <div class="confirm-icon confirm-err">!</div>
+      <h1>Pa t rive konfime peman an</h1>
+      <p>Si lajan an te retire nan kont ou, kontakte nou ak nimewo kòmand <span class="mono">#${orderId?.slice(0,8)}</span>.</p>
+    `;
+  }
+</script>
+</body>
+</html>

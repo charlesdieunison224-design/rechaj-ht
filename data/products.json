@@ -1,0 +1,56 @@
+[
+  {
+    "id": "ff-100",
+    "categorie": "jeux",
+    "jeu": "Free Fire",
+    "nom": "100 + 10 Diamants",
+    "prix_htg": 160,
+    "icone": "diamant",
+    "champs_requis": ["id_joueur"]
+  },
+  {
+    "id": "ff-200",
+    "categorie": "jeux",
+    "jeu": "Free Fire",
+    "nom": "200 + 20 Diamants",
+    "prix_htg": 320,
+    "icone": "diamant",
+    "champs_requis": ["id_joueur"]
+  },
+  {
+    "id": "pubg-60",
+    "categorie": "jeux",
+    "jeu": "PUBG Mobile",
+    "nom": "60 UC",
+    "prix_htg": 400,
+    "icone": "uc",
+    "champs_requis": ["id_joueur"]
+  },
+  {
+    "id": "pubg-325",
+    "categorie": "jeux",
+    "jeu": "PUBG Mobile",
+    "nom": "325 UC",
+    "prix_htg": 1800,
+    "icone": "uc",
+    "champs_requis": ["id_joueur"]
+  },
+  {
+    "id": "netflix-1mois",
+    "categorie": "streaming",
+    "jeu": "Netflix",
+    "nom": "Abònman 1 mwa",
+    "prix_htg": 500,
+    "icone": "play",
+    "champs_requis": ["email_compte"]
+  },
+  {
+    "id": "carte-prepaid-visa",
+    "categorie": "carte",
+    "jeu": "Carte prépayée",
+    "nom": "Kreyasyon kat Visa vityèl",
+    "prix_htg": 2500,
+    "icone": "carte",
+    "champs_requis": ["nom_complet", "telephone"]
+  }
+]

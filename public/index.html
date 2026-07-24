@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Rechaj — Jeux, Netflix &amp; Cartes prépayées</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <div class="brand">
+      <span class="brand-mark">⚡</span>
+      <span class="brand-name">Rechaj</span>
+    </div>
+    <div class="topbar-tagline">Kredi rapid, san tèt chaje</div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-inner">
+    <div class="ticket" id="hero-ticket">
+      <div class="ticket-notch ticket-notch-left"></div>
+      <div class="ticket-notch ticket-notch-right"></div>
+      <div class="ticket-row">
+        <span class="ticket-label">RECHARGE</span>
+        <span class="ticket-status">● pare</span>
+      </div>
+      <div class="ticket-amount">500<span class="ticket-unit">HTG</span></div>
+      <div class="ticket-row ticket-row-sub">
+        <span>Free Fire · Netflix · Carte prépayée</span>
+      </div>
+      <div class="ticket-code">MC-9F21-NC</div>
+    </div>
+    <div class="hero-text">
+      <h1>Rechaje jwèt ou, abònman Netflix ou, oswa kreye kat prepeye ou — dirèkteman sou telefòn ou.</h1>
+      <p>Peye ak <strong>MonCash</strong> oswa <strong>NatCash</strong>. Livrezon rapid, san bank.</p>
+    </div>
+  </div>
+</section>
+
+<nav class="cat-tabs wrap" id="cat-tabs">
+  <button class="cat-tab active" data-cat="jeux">Jwèt</button>
+  <button class="cat-tab" data-cat="streaming">Streaming</button>
+  <button class="cat-tab" data-cat="carte">Kat prepeye</button>
+</nav>
+
+<main class="wrap">
+  <div class="grid" id="product-grid">
+    <!-- rempli par app.js -->
+  </div>
+</main>
+
+<!-- Panneau de commande -->
+<div class="overlay" id="overlay"></div>
+<aside class="order-panel" id="order-panel">
+  <button class="close-btn" id="close-panel">✕</button>
+  <div id="order-panel-content"></div>
+</aside>
+
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <p>Rechaj — sit demo. Konfigire MonCash / NatCash nan .env anvan w mete l an pwodiksyon.</p>
+    <a href="/afilye.html" class="footer-link">💸 Vin Afilye — fè kòb</a>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
